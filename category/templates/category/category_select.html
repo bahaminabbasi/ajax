@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    category select
+    <form action="{% url 'products:add-product' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form }}
+      <div class="container">
+          <div class="row">
+            <div class="col-sm">
+                <select id="select_categories" name="select_categories" class="form-control">
+                  <option>-------------</option>
+                  {% for category in categories %}
+                    <option value="{{ category.name }}" id="{{ category.name }}">{{ forloop.counter }}. {{ category }}</option>
+                  {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm">
+              <select  id='levelone_placeholder'  name="levelone_placeholder" class="form-control">
+                <option value="">-------------</option>
+              </select>
+            </div>
+            <div class="col-sm">
+              <select  id='leveltwo_placeholder'  name="leveltwo_placeholder" class="form-control">
+                <option value="">-------------</option>
+              </select>
+            </div>
+          </div>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+{% endblock %}

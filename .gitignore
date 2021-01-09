@@ -1,0 +1,14 @@
+.vscode
+notes.py
+db.sqlite3
+pictures
+media
+
+tmp
+*.log
+__pycache__
+*.pyc
+*.pot
+*/*/*/__pycache__/*
+*/*/__pycache__/*
+*/__pycache__/*

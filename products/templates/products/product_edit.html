@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="">Title</label>
+            <input type="text" name="title" id="title" value="{{ product.title }}">
+        </div>
+        <div class="form-group">
+            <label for="">Brand Name</label>
+            <input type="text" name="brand_name" id="brand_name" value="{{ product.brand_name }}">
+        </div>
+        <div class="form-group">
+            <label for="">Current Category</label>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">{{ cat0 }}</li>
+                    <li class="breadcrumb-item">{{ cat1 }}</li>
+                  <li class="breadcrumb-item active" name="old_cat" id="old_cat" aria-current="page">{{ cat2 }}</li>
+                </ol>
+              </nav>
+        </div>
+        <div class="form-group">
+            <label for="">New Category</label>
+            <div class="row">
+                <div class="col-sm">
+                    <select id="select_categories" name="select_categories" class="form-control">
+                      <option>-------------</option>
+                      {% for category in categories %}
+                        <option value="{{ category.name }}" id="{{ category.name }}">{{ forloop.counter }}. {{ category }}</option>
+                      {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm">
+                  <select  id='levelone_placeholder'  name="levelone_placeholder" class="form-control">
+                    <option value="">-------------</option>
+                  </select>
+                </div>
+                <div class="col-sm">
+                  <select  id='leveltwo_placeholder'  name="leveltwo_placeholder" class="form-control">
+                    <option value="">-------------</option>
+                  </select>
+                </div>
+              </div>
+        </div>
+        <div class="form-group">
+            <label for="">Image</label>
+            
+            <input type="file" name="image" id="image">
+        </div>
+        <button type="submit" class="btn btn-success">Change</button>
+    </form>
+    <img src="{{ product.image.url }}" alt="" class="img-thumbnail">
+
+{% endblock %}

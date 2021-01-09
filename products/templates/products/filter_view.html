@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-7">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">name</th>
+            <th scope="col">brand name</th>
+            <th scope="col">price</th>
+            <th scope="col">category</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ product.title }}</td>
+                <td>{{ product.brand_name }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.category }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-4">
+      <form action="">
+        {{ myFilter.form|crispy }}
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+    </div>
+    <div class="col-3">
+      <a href="{% url 'products:sort-filter' 'price' %}">Exepensive</a>
+    </br>
+      <a href="{% url 'products:sort-filter' '-price' %}">Cheap</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
