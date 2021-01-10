@@ -1,10 +1,10 @@
 import os
 from .secrets import SECRET_KEY
+from .dev_settings import DEBUG, ALLOWED_HOSTS
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEBUG = True
-ALLOWED_HOSTS = []
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
