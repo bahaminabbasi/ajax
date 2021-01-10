@@ -1,4 +1,9 @@
-{{ product.title }}
+{% extends 'base.html' %}
+{% block content %}
+<div class='productTitle'>
+  {{ product.title }}
+</div>
 <br/>
 <img src="{{ product.image.url }}" alt="..." class="img-thumbnail">
+{% endblock %}
 
