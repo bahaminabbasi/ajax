@@ -3,6 +3,8 @@ notes.py
 db.sqlite3
 media
 A/secrets.py
+A/dev_settings.py
+
 
 
 
