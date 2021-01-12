@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 
-# Create your views here.
+
+def profile_page(request):
+    user = request.user
+
+    return render(request, 'accounts/profile.html', {'user': user})

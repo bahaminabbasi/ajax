@@ -18,9 +18,17 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.contrib.auth import views as auth_views
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('address/', include('address.urls', namespace='address')),
     path('category/', include('category.urls', namespace='category')),
+
+    path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
+
     path('info/', include('info.urls', namespace='info')),
     path('', include('main.urls', namespace='main')),
     path('products/', include('products.urls', namespace='products')),
