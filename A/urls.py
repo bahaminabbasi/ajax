@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('address/', include('address.urls', namespace='address')),
+    path('cart/', include('cart.urls', namespace='cart')),
     path('category/', include('category.urls', namespace='category')),
 
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
