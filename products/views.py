@@ -10,7 +10,7 @@ from .filters import ProductFilter
 def products_home(request):
     return render(request, 'products/products_home.html')
 
-
+#this is the view that renders all products
 def list_view(request):
     products = Product.objects.all()
     categories = Category.objects.filter(nesting_level=0)
@@ -139,8 +139,8 @@ def product_detail(request, slug):
     qs = Product.objects.filter(slug=slug)
     if qs.exists():
         product = qs.first()
-    else:
-        return HttpResponse('not found')
+    # else:
+    #     return HttpResponse('not found')
     context = {
         'product': product,
     }

@@ -15,3 +15,13 @@ class Product(models.Model):
     
     def __str__(self):
         return self.title
+
+
+    # Handles products that have no image
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = '' # can be placeholder ? !
+        return url
