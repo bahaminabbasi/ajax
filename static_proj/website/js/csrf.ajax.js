@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    console.log('csrf ready')
+    console.log('csrf readyy')
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
