@@ -1,9 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-from cart.models import Customer
 
 class Address(models.Model):
-    customer            = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    user                 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     city                 = models.CharField(max_length=220)
     full_address         = models.CharField(max_length=220)
     receiver_name        = models.CharField(max_length=220)
