@@ -30,6 +30,11 @@ function updateUserOrder(productId, action){
         success: function(data){
             console.log(data)
             location.reload()
+            if (data['max_reached'] === 'yes'){
+
+                window.alert("این تعداد موجود نمی باشد")
+
+            }
         }
     });
 }

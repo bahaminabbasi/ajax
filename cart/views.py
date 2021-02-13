@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 
 from .models import *
@@ -44,14 +44,22 @@ def updateItem(request):
         productId = request.POST['productId']
         action = request.POST['action']
         print(productId, action)
+
+        max_reached = 'no'
         # user = request.user
         product = Product.objects.get(id=productId)
+
+        quantity = product.quantity
 
         order, created = Order.objects.new_or_get(request)
         orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-        if action == 'add':
+        orderitem_quantity = orderItem.quantity
+
+        if action == 'add' and orderitem_quantity < quantity:
             orderItem.quantity = (orderItem.quantity + 1)
+        elif action == 'add' and orderitem_quantity >= quantity:
+            max_reached = 'yes'
         elif action == 'remove':
             orderItem.quantity = (orderItem.quantity - 1)
 
@@ -60,4 +68,12 @@ def updateItem(request):
         if orderItem.quantity <= 0:
             orderItem.delete()
 
-    return JsonResponse('Item was added', safe=False)
+        
+        
+
+    return JsonResponse({'max_reached': max_reached})
+
+def remove_item(request, id):
+    orderItem = OrderItem.objects.filter(id=id).first()
+    orderItem.delete()
+    return redirect('cart:cart')

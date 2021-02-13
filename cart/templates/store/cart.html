@@ -27,6 +27,7 @@
                     <div style="flex:2"><strong>Item</strong></div>
                     <div style="flex:1"><strong>Price</strong></div>
                     <div style="flex:1"><strong>Quantity</strong></div>
+                    <div style="flex:1"><strong>Action</strong></div>
                     <div style="flex:1"><strong>Total</strong></div>
                 </div>
                 {% for item in items %}
@@ -42,6 +43,7 @@
                                 <img data-product={{item.product.id}} data-action="remove" class="chg-quantity update-cart" src="{% static  'website/images/arrow-down.png' %}">
                             </div>
                         </div>
+                        <div style="flex:1"><p><a href="{% url 'cart:remove-item' item.id %}">Remove?</a></p></div>
                         <div style="flex:1"><p>${{ item.get_total }}</p></div>
                     </div>
                 {% endfor %}

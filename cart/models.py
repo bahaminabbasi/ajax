@@ -32,8 +32,8 @@ class OrderManager(models.Manager):
                     request.session.pop('order_id')
                     session_items.delete()
                     session_order_obj.delete()
-            else:
-                print('session_order_id was None!')   
+            # else:
+            #     print('session_order_id was None!')   
         else:
             order_obj, created = Order.objects.get_or_create(user=None, status='pending')
             request.session['order_id'] = order_obj.id
