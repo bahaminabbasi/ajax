@@ -7,6 +7,39 @@ from products.models import Product
 
 class OrderManager(models.Manager):
     def new_or_get(self, request):
+        print(request.user)
+        if not request.user.is_anonymous:
+            qs = self.get_queryset().filter(user=request.user, status='pending')
+            if qs.count() == 1:
+                new_obj = False
+                print('This user already has a pending order')
+                order_obj = qs.first()
+                items = order_obj.orderitem_set.all()
+
+                session_order_id = request.session.get('order_id', None)
+                session_order_qs = self.get_queryset().filter(id=session_order_id)
+                if session_order_qs.count() == 1:
+                    print('This user also have some items in session')
+                    session_order_obj = session_order_qs.first()       # items = order.orderitem_set.all()
+                    session_items = session_order_obj.orderitem_set.all()
+                    print('items: ', items)
+                    for session_item in session_items:
+                        for item in items:
+                            if item.product.title == session_item.product.title:
+                                print('similar items found...')
+                                item.quantity = item.quantity + session_item.quantity
+                                item.save()
+
+                            else:
+                                session_item.order = order_obj
+                                session_item.save()
+                        # session_items.delete()
+
+
+                return order_obj, new_obj
+
+
+
         order_id = request.session.get('order_id', None)
         qs = self.get_queryset().filter(id=order_id)
         if qs.count() == 1:
@@ -26,27 +59,24 @@ class OrderManager(models.Manager):
 
     def new(self, user=None):
         user_obj = None
+        # qs = self.model.objects.filter()
         if user is not None:
             if user.is_authenticated:
                 user_obj = user     
         return self.model.objects.create(user=user_obj)
 
 
-
-# class Customer(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-#     name = models.CharField(max_length=200, null=True)
-#     email = models.CharField(max_length=200, null=True)
-
-#     def __str__(self):
-#         return self.name
-
-
 class Order(models.Model):
+    STATUS = (
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+    )
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     date_orderd = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, blank=True, null=True)
     transaction_id = models.CharField(max_length=200, null=True)
+    status = models.CharField(max_length=20, choices=STATUS, default='pending')
+    reserved = models.BooleanField(default=False, blank=True, null=True)
 
     def __str__(self):
         return str(self.id)
@@ -78,3 +108,12 @@ class OrderItem(models.Model):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+
+
+# class Customer(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+#     name = models.CharField(max_length=200, null=True)
+#     email = models.CharField(max_length=200, null=True)
+
+#     def __str__(self):
+#         return self.name
