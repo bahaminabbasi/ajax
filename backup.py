@@ -1,3 +1,4 @@
+## First Version
 class OrderManager(models.Manager):
     def new_or_get(self, request):
         order_id = request.session.get('order_id', None)
@@ -23,3 +24,38 @@ class OrderManager(models.Manager):
             if user.is_authenticated:
                 user_obj = user     
         return self.model.objects.create(user=user_obj)
+
+## Second Version [problem is that it adds session cart items to db cart items
+# every time, instead it should add it once and del session cart]
+
+def new_or_get(self, request):
+        print(request.user)
+        if not request.user.is_anonymous:
+            qs = self.get_queryset().filter(user=request.user, status='pending')
+            if qs.count() == 1:
+                new_obj = False
+                print('This user already has a pending order')
+                order_obj = qs.first()
+                items = order_obj.orderitem_set.all()
+
+                session_order_id = request.session.get('order_id', None)
+                session_order_qs = self.get_queryset().filter(id=session_order_id)
+                if session_order_qs.count() == 1:
+                    print('This user also have some items in session')
+                    session_order_obj = session_order_qs.first()       # items = order.orderitem_set.all()
+                    session_items = session_order_obj.orderitem_set.all()
+                    print('items: ', items)
+                    for session_item in session_items:
+                        for item in items:
+                            if item.product.title == session_item.product.title:
+                                print('similar items found...')
+                                item.quantity = item.quantity + session_item.quantity
+                                item.save()
+
+                            else:
+                                session_item.order = order_obj
+                                session_item.save()
+                        # session_items.delete()
+
+
+                return order_obj, new_obj

@@ -7,63 +7,39 @@ from products.models import Product
 
 class OrderManager(models.Manager):
     def new_or_get(self, request):
-        print(request.user)
-        if not request.user.is_anonymous:
-            qs = self.get_queryset().filter(user=request.user, status='pending')
-            if qs.count() == 1:
-                new_obj = False
-                print('This user already has a pending order')
-                order_obj = qs.first()
-                items = order_obj.orderitem_set.all()
-
-                session_order_id = request.session.get('order_id', None)
-                session_order_qs = self.get_queryset().filter(id=session_order_id)
-                if session_order_qs.count() == 1:
-                    print('This user also have some items in session')
-                    session_order_obj = session_order_qs.first()       # items = order.orderitem_set.all()
+        if request.user.is_authenticated:
+            user = request.user
+            order_obj, created = Order.objects.get_or_create(user=user, status='pending')
+            # print('session order id', request.session['order_id'])
+            session_order_id = request.session.get('order_id', None)
+            if session_order_id is not None:
+                qs = self.get_queryset().filter(id=session_order_id)
+                session_order_obj = qs.first()
+                print('order in session, obj: ', session_order_obj)
+                if session_order_obj is not None:
                     session_items = session_order_obj.orderitem_set.all()
-                    print('items: ', items)
+                    items = order_obj.orderitem_set.all()
                     for session_item in session_items:
+                        found = False
                         for item in items:
                             if item.product.title == session_item.product.title:
-                                print('similar items found...')
+                                found = True
                                 item.quantity = item.quantity + session_item.quantity
                                 item.save()
-
-                            else:
-                                session_item.order = order_obj
-                                session_item.save()
-                        # session_items.delete()
-
-
-                return order_obj, new_obj
-
-
-
-        order_id = request.session.get('order_id', None)
-        qs = self.get_queryset().filter(id=order_id)
-        if qs.count() == 1:
-            new_obj = False
-            print('Order id already exists')
-            order_obj = qs.first()
-            if request.user.is_authenticated and order_obj.user is None:
-                order_obj.user = request.user
-                order_obj.save()
+                        if not found:
+                            session_item.order = order_obj
+                            session_item.save()
+                    request.session.pop('order_id')
+                    session_items.delete()
+                    session_order_obj.delete()
+            else:
+                print('session_order_id was None!')   
         else:
-            order_obj = Order.objects.new(user=request.user)
-            new_obj = True
-            print('New Order created')
+            order_obj, created = Order.objects.get_or_create(user=None, status='pending')
             request.session['order_id'] = order_obj.id
-        return order_obj, new_obj
+        return order_obj, created
 
-
-    def new(self, user=None):
-        user_obj = None
-        # qs = self.model.objects.filter()
-        if user is not None:
-            if user.is_authenticated:
-                user_obj = user     
-        return self.model.objects.create(user=user_obj)
+    
 
 
 class Order(models.Model):

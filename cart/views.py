@@ -11,7 +11,7 @@ def cart(request):
     cartItems = order.get_cart_items
     
     context = {'items': items, 'order': order, 'cartItems': cartItems}
-    # context = {'cart': cart_obj}
+    # # context = {'cart': cart_obj}
     return render(request, 'store/cart.html', context)
 
 
