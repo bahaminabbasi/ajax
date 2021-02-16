@@ -25,6 +25,8 @@ class OrderManager(models.Manager):
                             if item.product.title == session_item.product.title:
                                 found = True
                                 item.quantity = item.quantity + session_item.quantity
+                                if item.quantity > item.product.quantity:
+                                    item.quantity = item.product.quantity
                                 item.save()
                         if not found:
                             session_item.order = order_obj

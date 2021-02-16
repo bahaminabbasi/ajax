@@ -31,6 +31,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
 
     path('info/', include('info.urls', namespace='info')),
+    path('invoice/', include('invoice.urls', namespace='invoice')),
     path('', include('main.urls', namespace='main')),
     path('products/', include('products.urls', namespace='products')),
 ]

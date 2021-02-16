@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 
 from .models import *
+from address.models import Address
 
 
 def cart(request):
@@ -26,17 +27,18 @@ def cart(request):
 
 
 def checkout(request):
-    # if request.user.is_authenticated:
-    #     customer = request.user.customer
-    #     order, created = Order.objects.get_or_create(customer=customer, complete=False)
-    #     items = order.orderitem_set.all() # gets all the orderitems that hava 'order' as their parent ; return a qs
-    #     # print(items.last().product.title)
-    # else:
-    #     items = []
-    #     order = {'get_cart_total':0, 'get_cart_items':0}
+    if request.user.is_authenticated:
+        user = request.user
+        address = Address.objects.filter(user=user).first()
+        order, created = Order.objects.get_or_create(user=user, complete=False)
+        items = order.orderitem_set.all() # gets all the orderitems that hava 'order' as their parent ; return a qs
+        # print(items.last().product.title)
+    else:
+        items = []
+        order = {'get_cart_total':0, 'get_cart_items':0}
 
-    # context = {'items': items, 'order': order}
-    return render(request, 'store/checkout.html')
+    context = {'items': items, 'order': order, 'user': user, 'address': address}
+    return render(request, 'store/checkout.html', context)
 
 
 def updateItem(request):
